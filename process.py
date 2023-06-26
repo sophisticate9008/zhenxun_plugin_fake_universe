@@ -391,6 +391,10 @@ class Process:
             msg_merge(self.my_dict,"祝福列表", self.have_bless)
             msg_merge(self.my_dict,"宇宙碎片", self.gold)
             msg_merge(self.my_dict,"湮灭烛剪层数", self.yanmie_zhujian)
+            msg = my_dict["msg"]
+            log = my_dict["log"]
+            log += msg
+            my_dict["log"] = log
             await push_msg(self.bot, self.event, self.my_dict["log"])
             return "1" + 1
             
