@@ -1,0 +1,2 @@
+# zhenxun_plugin_fake_universe
+模拟宇宙的文字模拟
