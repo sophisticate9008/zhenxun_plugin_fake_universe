@@ -190,7 +190,7 @@ async def imitate(bot, event, my_dict):
     obj.weights[obj.mingtu] = 3
     mingtu = mingtu_list[int(choose_mingtu)]
     msg_merge(obj.my_dict,f"你选择了{mingtu}命途,获得对应祝福概率提升")
-    msg_merge(obj.my_dict,"选择",init_qiwu_list)
+    msg_merge(obj.my_dict,"选择(012)",init_qiwu_list)
     choose_qiwu = await get_answer(my_dict,bot, event,3)
     init_qiwu_name = init_qiwu_list[int(choose_qiwu)]
     obj.have_qiwu_list.append(init_qiwu_name)
