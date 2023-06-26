@@ -3,6 +3,7 @@ from utils.image_utils import text2image
 from utils.message_builder import image
 
 def msg_merge(my_dict={}, *args):
+    
     text = my_dict["msg"]
     text += "\n"
     for arg in args:
@@ -16,13 +17,13 @@ def msg_merge(my_dict={}, *args):
         else:       
             text += f"{arg}"
     my_dict["msg"] = text
-    log = my_dict["log"]
-    log += text
-    my_dict["log"] = log
     return text
 
 async def get_answer(my_dict, bot, event, up_limit):
     msg = my_dict["msg"]
+    log = my_dict["log"]
+    log += msg
+    my_dict["log"] = log
     await push_msg(bot, event, msg)
     my_dict["msg"] = ""
     time_count = 0
