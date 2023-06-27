@@ -176,11 +176,11 @@ class Process:
     def repair_qiwu(self):
         new_instance_qiwu = get_all_qiwu_list()
         repaired_qiwu_list = []
-        for i in range(len(self.have_instance_qiwu_list)):
-            if self.have_instance_qiwu_list[i].broke_count < 1:
+        for i in range(len(self.all_instance_qiwu_list)):
+            if self.all_instance_qiwu_list[i].broke_count < 1:
                 for j in new_instance_qiwu:
-                    if self.have_instance_qiwu_list[i].name == j.name:
-                        self.have_instance_qiwu_list[i] = j
+                    if self.all_instance_qiwu_list[i].name == j.name and "火漆" not in j.name and "测不准" not in j.name:
+                        self.all_instance_qiwu_list[i] = j
                         repaired_qiwu_list.append(j.name)
         return repaired_qiwu_list
     
@@ -334,7 +334,7 @@ class Process:
             if len(temp) == 4 and star_:
                 need_upgrade_list.append(i)
         return need_upgrade_list
-    def upgrade_bless(self, name, star="随机"):
+    def upgrade_bless(self, name="随机", star="随机"):
         
         gold_multi = 1
         need_upgrade_list = self.get_need_upgrade_list(star)
@@ -391,11 +391,12 @@ class Process:
             msg_merge(self.my_dict,"祝福列表", self.have_bless)
             msg_merge(self.my_dict,"宇宙碎片", self.gold)
             msg_merge(self.my_dict,"湮灭烛剪层数", self.yanmie_zhujian)
-            msg = my_dict["msg"]
-            log = my_dict["log"]
+            log = self.my_dict["log"]
+            msg = self.my_dict["msg"]
             log += msg
-            my_dict["log"] = log
+            self.my_dict["log"] = log
             await push_msg(self.bot, self.event, self.my_dict["log"])
+            
             return "1" + 1
             
 
@@ -447,11 +448,12 @@ class Process:
             for i in self.all_instance_thing_list:
                 if i.name == sel:
                     await i.use(self)
+                    _thing_list.remove(sel)
         else:
             for i in self.all_instance_thing_list:
                 if i.name == name:
                     await i.use(self)            
-                   
+                    self.all_instance_thing_list.remove(i)
             
             
             
