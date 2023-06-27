@@ -6,9 +6,9 @@ from .msg_utils import msg_merge
 def use_yinhedaletou(obj: 'Process'):
     a = random.randint(1, 100)
     result = 0
-    if a < 10:
+    if a < 15:
         result = 1
-    elif a < 30:
+    elif a < 20:
         msg_merge(obj.my_dict,f"银河大乐透生效")
         obj.normal_qiwu_list.remove("闪耀的偏方三八面骰")
         obj.normal_qiwu_list.remove("空无烛剪")
@@ -228,7 +228,7 @@ def use_pengke_luode_jingshen(obj: 'Process'):
     return 0
 
 def use_xinbiao_zhaoseji(obj: 'Process'):
-        
+    obj.upgrade_random = 1
     return 0
 
 def use_gongsigu_gugu_zhong(obj: 'Process'):
