@@ -13,9 +13,9 @@ class Qiwu:
         if(self.broke_count > 0):
             result = self.use_func(*args, **kwargs)
             self.broke_count -= result
-        elif self.broke_count == 0:
-            self.broke_count -= 1
-            await self.broken(*args, **kwargs)
+            if self.broke_count == 0:
+                self.broke_count -= 1
+                self.broken(*args, **kwargs)
         else:
             pass
     async def broken(self, *args, **kwargs):
