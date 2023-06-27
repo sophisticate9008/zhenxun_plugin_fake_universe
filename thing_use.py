@@ -46,22 +46,22 @@ async def xugoushixuejia(obj: 'Process'):
     msg_merge(obj.my_dict,"强化三个一星(0) 强化两个二星(1) 强化一个三星(2)")
     sel = await get_answer(obj.my_dict,obj.bot,obj.event,3)
     if "0" in sel:
-        obj.upgrade_bless("随机",star="一星")
-        obj.upgrade_bless("随机",star="一星")
-        obj.upgrade_bless("随机",star="一星")
+        obj.upgrade_bless(star="一星")
+        obj.upgrade_bless(star="一星")
+        obj.upgrade_bless(star="一星")
     elif "1" in sel:
-        obj.upgrade_bless("随机",star="二星")
-        obj.upgrade_bless("随机",star="二星")
+        obj.upgrade_bless(star="二星")
+        obj.upgrade_bless(star="二星")
     else:
-        obj.upgrade_bless("随机",star="三星")
+        obj.upgrade_bless(star="三星")
 
 async def youmukuanggong(obj: 'Process'):
     msg_merge(obj.my_dict,"游牧矿工事件触发")
     msg_merge(obj.my_dict,"强化两个随机祝福(0), 获得一个二星存护祝福(1),后续(012)")
     sel = await get_answer(obj.my_dict,obj.bot,obj.event,3)
     if "0" in sel:
-        obj.upgrade_bless("随机")
-        obj.upgrade_bless("随机")
+        obj.upgrade_bless()
+        obj.upgrade_bless()
     else:
         await obj.get_thing_bless("存护", "二星")
         
@@ -123,7 +123,7 @@ async def shangjinlieren(obj: 'Process'):
         ex_list = ["虫网", "机械咕咕钟", "公司咕咕钟", "永动咕咕钟", "黑森林咕咕钟", "卜筮咕咕钟","无限递归的代码", "有点蹊跷的代码",
                         "乱七八槽的代码", "没有注释的代码", "精确优雅的代码", "中规中矩的代码","天使型谢债发行机"]
         _list = list(set(qiwu_list) - set(ex_list))
-        choose_list = random.sample(_list, len(_list))
+        choose_list = random.sample(_list, 3 if len(_list) > 3 else len(_list))
         msg_merge(obj.my_dict,f"结果如下{choose_list}","按照012选择") 
         sel_1 = await get_answer(obj.my_dict,obj.bot,obj.event,3)
         obj.have_qiwu_list.remove(choose_list[int(sel_1)])
