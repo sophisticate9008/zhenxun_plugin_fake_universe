@@ -78,7 +78,7 @@ async def  shop(obj: 'Process'):
     elif "1" in sel and obj.gold >= 120:
         obj.gold -= 120
         await obj.get_thing_qiwu()
-    elif obj.gold >= 180:
+    elif obj.gold >= 180 and "2" in sel:
         obj.gold -= 180
         obj.upgrade_bless("随机")
         obj.upgrade_bless("随机")
@@ -194,6 +194,7 @@ async def imitate(bot, event, my_dict):
     choose_qiwu = await get_answer(my_dict,bot, event,3)
     init_qiwu_name = init_qiwu_list[int(choose_qiwu)]
     obj.have_qiwu_list.append(init_qiwu_name)
+    obj.normal_qiwu_list.remove(init_qiwu_name)
     msg_merge(obj.my_dict,f"开局获得{init_qiwu_name}")
     
     #第一关
