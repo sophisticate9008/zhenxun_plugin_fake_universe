@@ -29,7 +29,7 @@ async def get_answer(my_dict, bot, event, up_limit):
     my_dict["msg"] = ""
     time_count = 0
     condition = True
-    while condition and time_count <= 600:
+    while condition and time_count <= 1200:
         await asyncio.sleep(1)
         time_count += 1
         id = my_dict["answer_id"]

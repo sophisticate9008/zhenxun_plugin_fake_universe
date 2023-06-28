@@ -16,7 +16,7 @@ group_hook = {}
 __zx_plugin_name__ = "模拟模拟宇宙"
 __plugin_usage__ = """
 usage:
-    发送模拟模拟宇宙,一个群同时只有一人可玩，限时五分钟，当出现错误指令或者时间到会重置游戏
+    发送模拟模拟宇宙,一个群同时只有一人可玩，限时20分钟，当出现错误指令或者时间到会重置游戏
     开局后仅开局玩家可录入指令
 """.strip()
 __plugin_des__ = "模拟模拟宇宙"
@@ -79,7 +79,7 @@ async def _(bot:Bot, event: GroupMessageEvent):
         
 async def jishiqi(group_id):
     global group_hook
-    cd = 600
+    cd = 1200
     while cd > 0:
         cd -= 1
         await asyncio.sleep(1)
