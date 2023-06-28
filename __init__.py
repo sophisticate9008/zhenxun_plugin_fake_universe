@@ -9,14 +9,14 @@ from nonebot.adapters.onebot.v11 import (
 from .imitate import imitate
 
 from nonebot import on_command,on_message
-
+from nonebot.adapters.onebot.v11.exception import ActionFailed
 from utils.utils import get_message_text
 group_hook = {}
 
 __zx_plugin_name__ = "模拟模拟宇宙"
 __plugin_usage__ = """
 usage:
-    发送模拟模拟宇宙,一个群同时只有一人可玩，限时十分钟，当出现错误指令或者时间到会重置游戏
+    发送模拟模拟宇宙,一个群同时只有一人可玩，限时五分钟，当出现错误指令或者时间到会重置游戏
     开局后仅开局玩家可录入指令
 """.strip()
 __plugin_des__ = "模拟模拟宇宙"
@@ -57,6 +57,8 @@ async def _(bot:Bot, event: GroupMessageEvent):
     async_list = [imitate(bot, event, group_hook[event.group_id]), jishiqi(event.group_id)]
     try:
         await asyncio.gather(*async_list)
+    except ActionFailed:
+        pass
     except Exception as e:
         print(e)
         group_hook[event.group_id] = {}

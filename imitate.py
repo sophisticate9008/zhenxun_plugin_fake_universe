@@ -8,6 +8,7 @@ def compare_priority(obj):#对奇物优先级进行排序
 
 
 from .msg_utils import *
+from .pic_utils import *
 #0是击碎破坏物函数  #1是获得战斗后函数 #2是获得后立刻生效的函数 #3是回合结束后结算的函数
 async def obtain_qiwu(obj: 'Process', type=0):#按照优先度获取奇物使用函数进行叠加
     obj.name_into_obj()
@@ -39,6 +40,7 @@ async def attack_monster(obj : 'Process', is_elite, is_thing = 0):
         if obj.refresh_free == 1:
             result = obj.get_bless("随机", star)
             msg_merge(obj.my_dict,"可选祝福为",result)
+            await push_image(obj.my_dict, obj.bot, obj.event, pic2b64(make_choose_bless_card(result, obj.gold)))
             msg_merge(obj.my_dict,"刷新(3) 选择(012)")
             sel = await get_answer(obj.my_dict, obj.bot, obj.event, 4)
             if "3" in sel:
@@ -80,8 +82,8 @@ async def  shop(obj: 'Process'):
         await obj.get_thing_qiwu()
     elif obj.gold >= 180 and "2" in sel:
         obj.gold -= 180
-        obj.upgrade_bless("随机")
-        obj.upgrade_bless("随机")
+        await obj.upgrade_bless("随机")
+        await obj.upgrade_bless("随机")
     else:
         pass
     await obtain_qiwu(obj, 2)#立即生效
@@ -183,7 +185,7 @@ async def imitate(bot, event, my_dict):
         init_qiwu_list = random.sample(obj.normal_qiwu_list, 3)
         temp_count += 1
     #开局
-    mingtu_list = ["巡猎", "存护", "丰饶", "毁灭", "虚无", "记忆", "欢愉"]
+    mingtu_list = ["存护", "记忆", "虚无", "丰饶", "巡猎", "毁灭", "欢愉"]
     msg_merge(obj.my_dict,f"选择你的命途(0123456){mingtu_list}")
     choose_mingtu = await get_answer(my_dict,bot, event,7)
     obj.mingtu = int(choose_mingtu)

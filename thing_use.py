@@ -4,7 +4,7 @@ if TYPE_CHECKING:
     from .process import Process
 import random
 from .msg_utils import *
-
+from .pic_utils import *
 
 
 async def zhuchengzhe(obj: 'Process'):
@@ -46,22 +46,22 @@ async def xugoushixuejia(obj: 'Process'):
     msg_merge(obj.my_dict,"强化三个一星(0) 强化两个二星(1) 强化一个三星(2)")
     sel = await get_answer(obj.my_dict,obj.bot,obj.event,3)
     if "0" in sel:
-        obj.upgrade_bless(star="一星")
-        obj.upgrade_bless(star="一星")
-        obj.upgrade_bless(star="一星")
+        await obj.upgrade_bless(star="一星")
+        await obj.upgrade_bless(star="一星")
+        await obj.upgrade_bless(star="一星")
     elif "1" in sel:
-        obj.upgrade_bless(star="二星")
-        obj.upgrade_bless(star="二星")
+        await obj.upgrade_bless(star="二星")
+        await obj.upgrade_bless(star="二星")
     else:
-        obj.upgrade_bless(star="三星")
+        await obj.upgrade_bless(star="三星")
 
 async def youmukuanggong(obj: 'Process'):
     msg_merge(obj.my_dict,"游牧矿工事件触发")
     msg_merge(obj.my_dict,"强化两个随机祝福(0), 获得一个二星存护祝福(1),后续(012)")
     sel = await get_answer(obj.my_dict,obj.bot,obj.event,3)
     if "0" in sel:
-        obj.upgrade_bless()
-        obj.upgrade_bless()
+        await obj.upgrade_bless()
+        await obj.upgrade_bless()
     else:
         await obj.get_thing_bless("存护", "二星")
         
@@ -384,7 +384,8 @@ async def xiangsusijie(obj: 'Process'):
         result = random.sample(result, 2)
         for i in result:
             msg_merge(obj.my_dict,"获得", i)
-            obj.choose_bless(result)          
+            obj.choose_bless(i)
+        push_image(obj.my_dict, obj.bot, obj.event, pic2b64(make_choose_bless_card(result, obj.gold)))         
 
 async def yinhehaoren(obj: 'Process'):
     msg_merge(obj.my_dict,"银河好人事件触发")
@@ -393,7 +394,7 @@ async def yinhehaoren(obj: 'Process'):
     if "0" in sel:
         obj.gold -= 10
         for i in range(3):
-            obj.upgrade_bless()
+            await obj.upgrade_bless()
     elif "1" in sel:
         await obj.get_thing_bless("随机","三星")
 

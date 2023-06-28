@@ -24,7 +24,8 @@ async def get_answer(my_dict, bot, event, up_limit):
     log = my_dict["log"]
     log += msg
     my_dict["log"] = log
-    await push_msg(bot, event, msg)
+    if msg != "":
+        await push_msg(bot, event, msg)
     my_dict["msg"] = ""
     time_count = 0
     condition = True
@@ -55,3 +56,12 @@ async def get_answer(my_dict, bot, event, up_limit):
 
 async def push_msg(bot, event, msg):
     await bot.send(event,image(b64=(await text2image(msg, color="#f9f6f2", padding=10)).pic2bs4()))
+
+async def push_image(my_dict, bot, event, _image):
+    msg = my_dict["msg"]
+    log = my_dict["log"]
+    log += msg
+    my_dict["log"] = log
+    await push_msg(bot, event, msg)
+    my_dict["msg"] = ""
+    await bot.send(event,image(b64=_image))

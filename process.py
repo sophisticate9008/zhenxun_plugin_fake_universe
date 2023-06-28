@@ -3,6 +3,7 @@ from .thing import get_all_thing_list
 import random
 import sys
 from .msg_utils import *
+from .pic_utils import *
 class Process:
     leg_count = 1
     negative_qiwu_list = ["机械咕咕钟", "公司咕咕钟", "永动咕咕钟", "黑森林咕咕钟", "卜筮咕咕钟"]
@@ -194,17 +195,17 @@ class Process:
         kind_5 = []
         kind_6 = []
         for i in self.all_bless:
-            if "巡猎" in i:
-                kind_0.append(i)
             if "存护" in i:
-                kind_1.append(i)
-            if "丰饶" in i:
-                kind_2.append(i)                             
-            if "毁灭" in i:
-                kind_3.append(i)
-            if "虚无" in i:
-                kind_4.append(i)
+                kind_0.append(i)
             if "记忆" in i:
+                kind_1.append(i)
+            if "虚无" in i:
+                kind_2.append(i)                             
+            if "丰饶" in i:
+                kind_3.append(i)
+            if "巡猎" in i:
+                kind_4.append(i)
+            if "毁灭" in i:
                 kind_5.append(i)
             if "欢愉" in i:
                 kind_6.append(i)
@@ -274,7 +275,7 @@ class Process:
         while condition:
             condition_count = 0
             choose_list = random.choices(
-                [immsg_merge for category in all_kind_bless for immsg_merge in category],  # 平铺刻印列表
+                [im for category in all_kind_bless for im in category],  # 平铺刻印列表
                 weights=[weight for weight, category in zip(normalized_weights, all_kind_bless) for _ in range(len(category))],  # 平铺权重列表
                 k=bless_count  # 选择数量
             )
@@ -334,7 +335,7 @@ class Process:
             if len(temp) == 4 and star_:
                 need_upgrade_list.append(i)
         return need_upgrade_list
-    def upgrade_bless(self, name="随机", star="随机"):
+    async def upgrade_bless(self, name="随机", star="随机"):
         
         gold_multi = 1
         need_upgrade_list = self.get_need_upgrade_list(star)
@@ -356,6 +357,7 @@ class Process:
             self.have_bless.append(_upgrade_bless + "_2")
             if name == "随机":
                 msg_merge(self.my_dict,"强化结果", _upgrade_bless)
+                await push_image(self.my_dict, self.bot, self.event, pic2b64(make_choose_bless_card([_upgrade_bless, _upgrade_bless + "_2"], self.gold)))
             self.gold -= gold_need * gold_multi * self.xinyangzhaiquan_multi
         else:
             msg_merge(self.my_dict,"没有可用强化的祝福")
@@ -405,12 +407,14 @@ class Process:
         gold_spend = 30 * self.xinyangzhaiquan_multi
         result = self.get_bless(name,star, type, three_prob=three_prob)
         msg_merge(self.my_dict,"请选择",result)
+        await push_image(self.my_dict, self.bot, self.event, pic2b64(make_choose_bless_card(result, self.gold)))
         if self.gold >= gold_spend:
             msg_merge(self.my_dict,f"3刷新,消耗{gold_spend}碎片,当前碎片{self.gold}, 012选择, 请选择")
             sel = await get_answer(self.my_dict,self.bot,self.event,4)
             if "3" in sel:
                 result = self.get_bless(name,star, type,three_prob=three_prob)
                 msg_merge(self.my_dict,"请选择(012)",result)
+                await push_image(self.my_dict, self.bot, self.event, pic2b64(make_choose_bless_card(result, self.gold)))
                 sel_1 = await get_answer(self.my_dict,self.bot,self.event,3)
                 result = result[int(sel_1)]
                 self.choose_bless(result)
