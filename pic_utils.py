@@ -49,7 +49,7 @@ def make_choose_bless_card(bless_list:list, gold):
         composite_image = paste_image(composite_image, i, (count * devide_size,0), ((count + 1) * devide_size,background.size[1]),0.7 if num > 1 else 0.3,1)
         count += 1
     composite_image = add_text_to_image(composite_image, f"宇宙碎片数量:{gold}", (background.size[0] - 300, 0), (background.size[0], 50), 25)
-    composite_image = convert_png_to_jpg_with_lower_quality(composite_image, 75)
+    composite_image = convert_png_to_jpg_with_lower_quality(composite_image, 0.4)
     return composite_image
     
 
@@ -107,18 +107,23 @@ def paste_image(image, paste_image, start_coord, end_coord, size_ratio, opacity)
 
     return image
 
-def convert_png_to_jpg_with_lower_quality(image, quality):
+def convert_png_to_jpg_with_lower_quality(image : Image, ratio):
+    re_size = (int(image.size[0] * ratio), int(image.size[1] * ratio))
     # 将PNG图像转换为RGB模式
     rgb_image = image.convert("RGB")
-
+    
+    rgb_image = rgb_image.resize(re_size)
     # 创建新的JPEG图像对象，大小和原图相同
-    jpeg_image = Image.new("RGB", image.size)
+    jpeg_image = Image.new("RGB", re_size)
 
     # 将RGB图像粘贴到JPEG图像对象中
+    
     jpeg_image.paste(rgb_image, (0, 0))
 
-    # 降低JPEG图像质量并返回图像对象
     
+
+    # 降低JPEG图像质量并返回图像对象
+    # jpeg_image.save(directory + "/mresult.jpg")
     return jpeg_image
 
 
@@ -143,7 +148,7 @@ def pic2b64(pic: Image) -> str:
         :param pic: 通过PIL打开的图片文件
     """
     buf = BytesIO()
-    pic.save(buf, format="PNG")
+    pic.save(buf, format="JPEG", quality=20)
     base64_str = base64.b64encode(buf.getvalue()).decode()
     return "base64://" + base64_str
 
