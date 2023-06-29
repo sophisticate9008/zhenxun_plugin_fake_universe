@@ -64,4 +64,7 @@ async def push_image(my_dict, bot, event, _image):
     my_dict["log"] = log
     await push_msg(bot, event, msg)
     my_dict["msg"] = ""
-    await bot.send(event,image(b64=_image))
+    try:    
+        await bot.send(event,image(b64=_image))
+    except:
+        pass
