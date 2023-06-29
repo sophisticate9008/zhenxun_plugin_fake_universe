@@ -308,7 +308,7 @@ class Process:
                 return_list.append(upgrade_bless + "_2")
                 need_upgrade_list.remove(upgrade_bless)
                 for j in need_upgrade_list:
-                    return_list.append(i)
+                    return_list.append(j)
         else:
             return_list = upgrade_list
         return return_list    
