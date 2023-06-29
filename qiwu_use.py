@@ -9,7 +9,7 @@ async def use_yinhedaletou(obj: 'Process'):
     result = 0
     if a < 15:
         result = 1
-    elif a < 20:
+    elif a < 35:
         msg_merge(obj.my_dict,f"银河大乐透生效")
         obj.normal_qiwu_list.remove("闪耀的偏方三八面骰")
         obj.normal_qiwu_list.remove("空无烛剪")
