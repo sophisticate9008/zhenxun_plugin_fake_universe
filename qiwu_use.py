@@ -9,7 +9,7 @@ async def use_yinhedaletou(obj: 'Process'):
     result = 0
     if a < 15:
         result = 1
-    elif a < 35:
+    elif a < 20:
         msg_merge(obj.my_dict,f"银河大乐透生效")
         obj.normal_qiwu_list.remove("闪耀的偏方三八面骰")
         obj.normal_qiwu_list.remove("空无烛剪")
@@ -221,8 +221,13 @@ async def use_wanshi_nang(obj: 'Process'):
     return 0
 
 async def use_bushi_gugu_zhong(obj: 'Process'):
-    
-    return 0
+    obj.bless_count = 2
+    for i in obj.have_instance_qiwu_list:
+        if "降维骰子" in i.name:
+            if i.broke_count >= 0:
+                obj.bless_count -= 1
+            else:
+                obj.bless_count = 2
 
 async def use_heisenlin_gugu_zhong(obj: 'Process'):
     
