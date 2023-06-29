@@ -16,7 +16,9 @@ async def obtain_qiwu(obj: 'Process', type=0):#按照优先度获取奇物使用
     for i in sorted_list:
         self_type = i.type
         if self_type == type:
-            await i.use(obj)
+            text = await i.use(obj)
+            if text != "":
+                msg_merge(obj.my_dict,text)
 
 
 

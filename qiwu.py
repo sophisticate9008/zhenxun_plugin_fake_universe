@@ -1,5 +1,6 @@
 from .qiwu_use import *
 from .qiwu_broken import *
+from .msg_utils import *
 class Qiwu:
     character_arg = 0
     def __init__(self, name, broke_count,priority,type,use_func, broken_func = None):
@@ -10,14 +11,18 @@ class Qiwu:
         self.type = type
         self.broken_func = broken_func
     async def use(self, *args, **kwargs):
+        text = ""
         if(self.broke_count > 0):
             result = await self.use_func(*args, **kwargs)
             self.broke_count -= result
-            if self.broke_count == 0:
-                self.broke_count -= 1
-                await self.broken(*args, **kwargs)
+        elif self.broke_count == 0:
+            if "火漆" not in self.name and "测不准" not in self.name:    
+                text += f"{self.name}损坏"
+            self.broke_count -= 1
+            await self.broken(*args, **kwargs)
         else:
             pass
+        return text
     async def broken(self, *args, **kwargs):
         if self.broken_func is not None:  
             return await self.broken_func(*args, **kwargs)
