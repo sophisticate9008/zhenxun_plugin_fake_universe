@@ -46,7 +46,7 @@ async def use_cebuzhun_xia(obj: 'Process'):
     bless_list = obj.get_bless("随机","随机", 3, three_prob=5)
     choose_list = random.sample(bless_list, num)
     msg_merge(obj.my_dict,"获得祝福",choose_list)
-    await push_image(obj.my_dict, obj.bot, obj.event, pic2b64(make_choose_bless_card(choose_list), obj.gold))
+    await push_image(obj.my_dict, obj.bot, obj.event, pic2b64(make_choose_bless_card(choose_list,obj.gold)))
     
     for i in choose_list:
         obj.choose_bless(i)
