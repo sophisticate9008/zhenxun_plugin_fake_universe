@@ -15,9 +15,10 @@ class Qiwu:
         if(self.broke_count > 0):
             result = await self.use_func(*args, **kwargs)
             self.broke_count -= result
-        elif self.broke_count == 0:
-            if "火漆" not in self.name and "测不准" not in self.name:    
+            if self.broke_count == 0 and "火漆" not in self.name and "测不准" not in self.name:    
                 text += f"{self.name}损坏"
+        elif self.broke_count == 0:
+
             self.broke_count -= 1
             await self.broken(*args, **kwargs)
         else:
