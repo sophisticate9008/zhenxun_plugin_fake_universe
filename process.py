@@ -305,7 +305,7 @@ class Process:
                     return_list.append(i)
             if len(need_upgrade_list) > 0:
                 upgrade_bless = random.choice(need_upgrade_list)
-                return_list.append(upgrade_bless)
+                return_list.append(upgrade_bless + "_2")
                 need_upgrade_list.remove(upgrade_bless)
                 for j in need_upgrade_list:
                     return_list.append(i)
