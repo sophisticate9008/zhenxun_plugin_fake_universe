@@ -322,7 +322,7 @@ async def imitate(bot, event, my_dict):
         await normal_leg(obj, 2)
     elif "交易" in result[int(sel)]:
         await thing_leg(obj, 2)
-    end_upgrade_bless(obj)    
+    await end_upgrade_bless(obj)    
     
     await obj.dir_end(100)
     
