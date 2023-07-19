@@ -178,6 +178,18 @@ async def normal_leg(obj: 'Process', monster_num=3):
     await turn_end(obj)
 
 
+async def end_upgrade_bless(obj: 'Process'):    
+    msg_merge(obj.my_dict, "升级需要升级的祝福,当前宇宙碎片为(输入序号序列010203...1011必须两位在一起:", obj.gold)
+    result = obj.get_need_upgrade_list()
+    for i in range(len(result)):
+        msg_merge(obj.my_dict, "{:02d}".format(i) , result[i].split("_")[3])
+    sel = await get_answer(obj.my_dict,obj.bot, obj.event,len(result))
+    two_digit_strs = [sel[i:i+2] for i in range(0, len(sel), 2)]
+    for two_digit_str in two_digit_strs:
+        num = int(two_digit_str)
+        obj.upgrade_bless(result[num])
+
+
 from .process import Process
 async def imitate(bot, event, my_dict):
     obj = Process(my_dict, bot, event)
@@ -310,6 +322,8 @@ async def imitate(bot, event, my_dict):
         await normal_leg(obj, 2)
     elif "交易" in result[int(sel)]:
         await thing_leg(obj, 2)
+    end_upgrade_bless(obj)    
+    
     await obj.dir_end(100)
     
 

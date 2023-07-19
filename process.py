@@ -4,6 +4,8 @@ import random
 import sys
 from .msg_utils import *
 from .pic_utils import *
+from .json_util import *
+
 class Process:
     leg_count = 1
     negative_qiwu_list = ["机械咕咕钟", "公司咕咕钟", "永动咕咕钟", "黑森林咕咕钟", "卜筮咕咕钟"]
@@ -254,19 +256,12 @@ class Process:
                     star_list.append(i)
             if star in i:
                 star_list.append(i)
-        for i in star_list:
+        for i in star_list[:]:
             if "特殊" in i:
                 temp = i.split("_")
                 if temp[1] == "二星":
                     if temp[2] not in unaverage_bless_unlock:
                         star_list.remove(i)
-        for i in star_list:
-            if "特殊" in i:
-                temp = i.split("_")
-                if temp[1] == "二星":
-                    if temp[2] not in unaverage_bless_unlock:
-                        star_list.remove(i)
-        
         choose_list = []
         bless_count = self.bless_count
         if type != 0:
@@ -352,13 +347,13 @@ class Process:
                 gold_need = 130
             if "三星" in _upgrade_bless:
                 gold_need = 160
-            
-            self.have_bless.remove(_upgrade_bless)
-            self.have_bless.append(_upgrade_bless + "_2")
+            if self.gold >= gold_need * gold_multi * self.xinyangzhaiquan_multi:     
+                self.have_bless.remove(_upgrade_bless)
+                self.have_bless.append(_upgrade_bless + "_2")
+                self.gold -= gold_need * gold_multi * self.xinyangzhaiquan_multi
             if name == "随机":
                 msg_merge(self.my_dict,"强化结果", _upgrade_bless)
                 await push_image(self.my_dict, self.bot, self.event, pic2b64(make_choose_bless_card([_upgrade_bless, _upgrade_bless + "_2"], self.gold)))
-            self.gold -= gold_need * gold_multi * self.xinyangzhaiquan_multi
         else:
             msg_merge(self.my_dict,"没有可用强化的祝福")
     async def throw_bless(self, one, two, three):
@@ -392,11 +387,21 @@ class Process:
             msg_merge(self.my_dict,"奇物列表", self.have_qiwu_list)
             msg_merge(self.my_dict,"祝福列表", self.have_bless)
             msg_merge(self.my_dict,"宇宙碎片", self.gold)
+            harm_0 = self.cal_harm(0)
+            harm_1 = self.cal_harm(0)
+            if harm_0[0] > harm_1[0]:
+                msg_merge(self.my_dict, harm_0[1])
+                record_harm(self.event, harm_0[0])
+            else:
+                msg_merge(self.my_dict, harm_1[1])
+                record_harm(self.event, harm_1[0])               
             msg_merge(self.my_dict,"湮灭烛剪层数", self.yanmie_zhujian)
+         
             log = self.my_dict["log"]
             msg = self.my_dict["msg"]
             log += msg
             self.my_dict["log"] = log
+
             await push_msg(self.bot, self.event, self.my_dict["log"])
             
             return "1" + 1
@@ -458,9 +463,243 @@ class Process:
                 if i.name == name:
                     await i.use(self)            
                     self.all_instance_thing_list.remove(i)
-            
-            
-            
-            
+    def cal_harm(self, life_sel):
+        with open(info_dir, "r", encoding= "utf-8") as f:
+            info = json.load(f)        
+        life_recover_role = 0#角色回血量
+        addition_harm = 0#附加伤害
+        attack = 2500#
+        attack_basis = 2500
+        attack_enemy = 5000
+        attack_beilv = 1#攻击力倍率
+        attack_enemy_dec_beilv = 1
+
+        zhuijia_beilv = 5
+        continue_harm_beilv = 1#持续伤害倍率
+        crit_harm = 2
+        continue_harm = 0#持续伤害
+        crit_rate = 0.5
+        crit_rate_zhuijia = 0
+        defense = 3000#防御力
+        defense_basis = 3000
+        easy_hurt = 1
+        easy_hurt_continue = 1
+        end_beilv = 5
+        end_zhuijia_beilv = 0
+        fanzhen = 0#反震伤害
+        harm_beilv = 0#追加 终结共同倍率
+        huiwei = 0#回味伤害
+        huiwei_beilv = 1
+        huiwei_count = 0
+        huixin_limit = 0#会心上限
+        jipo = 0#击破特攻, 50%加成瞬间击破伤害， 50%加成持续伤害
+        lieshang_beilv = 0
+        life_basis = 5000#基础生命
+        life_enemy = 150000
+
+        life_now = 0#当前生命
+        life_recover = 0#回血量
+        life = 8000#生命上限
+        lishen_beilv = 1#离神伤害的倍率
+        lishen_multi = 1#离神伤害额外x区
+        lishen_multi_1 = 1#额外x区
+        shield = 0
+        shield_add = 0
+        shield_all = 0
+        shield_role = 0#角色提供的护盾量
+        shield_role_beilv = 1
         
+        suspect_count = 0
+        xiaolv_continue = 1#持续伤害加成
+        xiaolv_huixin = 1#会心效果加成
+        xiaolv_life = 0#回血效果加成
+        xiaolv_shield = 1#护盾增加加成
+        xiaolv_zhanyi = 1#战意效果加成
+        xiaolv_zhulu = 1#zhulu回复量加成
+        zhanyi_limit = 0#战意上限
+        zhuijia_addition = 0#追加伤害附加伤害
+        zhuijia_harm_beilv = 1
+        zhulu = 0#zhulu存储量&伤害
+        zhulu_beilv = 1#zhulu伤害倍率
+        lishen_have = 0
+        msg = ""
+        qiwi_num = len(self.have_qiwu_list)
+        harm_beilv += 0.05 * qiwi_num
+        if "纯美之袍" in self.have_qiwu_list:
+            harm_beilv += self.gold // 100 * 0.16
+        if "没有注释的代码" in self.have_qiwu_list:
+            harm_beilv += 0.35
+        if "虫网" in self.have_qiwu_list:
+            attack += attack_basis * 0.5
+        harm_beilv += self.yanmie_zhujian * 0.03
+        #--------------------------------------
+        #--------------------------------------
+
+        #生命上限优先加 其次是防御力，然后是护盾，然后是攻击力，然后是治疗量
+        for j in range(6):
+            locals_dict = locals()
+            locals_dict["info"] = {}
+            for i in self.have_bless:
+                temp = i.split("_")
+                type = temp[2]
+                name = temp[3]
+
+                if info[type][name]["4"] == j:
+                    if len(temp) == 4:
+                        sel = "2"
+                    else:
+                        sel = "3"
+                    exec(info[type][name][sel], globals(),locals_dict)
+                    
+                try:
+                    exec(func_result, globals(), locals_dict)
+                    
+                except Exception as e:
+                    pass
+# region
+                zhulu = locals_dict["zhulu"]
+                life_recover_role = locals_dict["life_recover_role"]
+                addition_harm = locals_dict["addition_harm"]
+                attack = locals_dict["attack"]
+                attack_basis = locals_dict["attack_basis"]
+                attack_enemy = locals_dict["attack_enemy"]
+                attack_beilv = locals_dict["attack_beilv"]
+                attack_enemy_dec_beilv = locals_dict["attack_enemy_dec_beilv"]
+                zhuijia_beilv = locals_dict["zhuijia_beilv"]
+                continue_harm_beilv = locals_dict["continue_harm_beilv"]
+                crit_harm = locals_dict["crit_harm"]
+                continue_harm = locals_dict["continue_harm"]
+                crit_rate = locals_dict["crit_rate"]
+                crit_rate_zhuijia = locals_dict["crit_rate_zhuijia"]
+                defense = locals_dict["defense"]
+                defense_basis = locals_dict["defense_basis"]
+                easy_hurt = locals_dict["easy_hurt"]
+                easy_hurt_continue = locals_dict["easy_hurt_continue"]
+                end_beilv = locals_dict["end_beilv"]
+                end_zhuijia_beilv = locals_dict["end_zhuijia_beilv"]
+                fanzhen = locals_dict["fanzhen"]
+                harm_beilv = locals_dict["harm_beilv"]
+                huiwei = locals_dict["huiwei"]
+                huiwei_beilv = locals_dict["huiwei_beilv"]
+                huiwei_count = locals_dict["huiwei_count"]
+                huixin_limit = locals_dict["huixin_limit"]
+                jipo = locals_dict["jipo"]
+                lieshang_beilv = locals_dict["lieshang_beilv"]
+                life_basis = locals_dict["life_basis"]
+                life_enemy = locals_dict["life_enemy"]
+                life_now = locals_dict["life_now"]
+                life_recover = locals_dict["life_recover"]
+                life = locals_dict["life"]
+                lishen_beilv = locals_dict["lishen_beilv"]
+                lishen_multi = locals_dict["lishen_multi"]
+                lishen_multi_1 = locals_dict["lishen_multi_1"]
+                shield = locals_dict["shield"]
+                shield_add = locals_dict["shield_add"]
+                shield_all = locals_dict["shield_all"]
+                shield_role = locals_dict["shield_role"]
+                shield_role_beilv = locals_dict["shield_role_beilv"]
+                suspect_count = locals_dict["suspect_count"]
+                xiaolv_continue = locals_dict["xiaolv_continue"]
+                xiaolv_huixin = locals_dict["xiaolv_huixin"]
+                xiaolv_life = locals_dict["xiaolv_life"]
+                xiaolv_shield = locals_dict["xiaolv_shield"]
+                xiaolv_zhanyi = locals_dict["xiaolv_zhanyi"]
+                xiaolv_zhulu = locals_dict["xiaolv_zhulu"]
+                zhanyi_limit = locals_dict["zhanyi_limit"]
+                zhuijia_addition = locals_dict["zhuijia_addition"]
+                zhuijia_harm_beilv = locals_dict["zhuijia_harm_beilv"]
+                lishen_have = locals_dict["lishen_have"] 
+# endregion         
+            if j == 0:#战意,会心
+                # 战意
+                defense += defense_basis * 0.03 * zhanyi_limit * xiaolv_zhanyi
+                
+                attack += attack_basis * 0.03 * zhanyi_limit * xiaolv_zhanyi
+                #会心
+                crit_rate += huixin_limit * 0.06 * xiaolv_huixin
+                crit_harm += huixin_limit * 0.12 * xiaolv_huixin
+                #持续伤害
+                continue_harm = (20000 + life_enemy * 0.07 * lieshang_beilv) * xiaolv_continue
+                
+                
+            if j == 1:#防御力,会心,当前血量
+                shield_role = defense * 0.5
+                shield_role *= shield_role_beilv
+                shield_add += shield_role
+                shield_all = shield_add * 4
+                shield = shield_add * (1 + xiaolv_shield)
+                if life_sel == 0:
+                    life_now = life
+                else:
+                    life_now = life * 0.01
+                easy_hurt += suspect_count * 0.01 
+            if j == 2:#攻击力,治疗量(血量100% 攻击力100%)
+                attack *= attack_beilv
+                life_recover_role += life + attack
+                life_recover += life_recover_role * 4
+            
+            if j == 4:
+                attack_enemy *= attack_enemy_dec_beilv
+
+        #必杀期望伤害 = (攻击力 * 必杀倍率 * 暴伤 * 暴击率 + 攻击力 * 必杀倍率 * (1 - 暴击率) ) * (通用伤害加成 + 追加必杀技) * 易伤
+        end_harm = (attack * end_beilv + addition_harm + zhulu* zhulu_beilv + fanzhen) * (crit_harm * crit_rate + (1 - crit_rate)) * (1 + harm_beilv + end_zhuijia_beilv)  * easy_hurt
+        msg += f" 必杀期望伤害 {int(end_harm)}"
+        #追加期望伤害 =  (攻击力 * 必杀倍率 + 追加附加 + 回味) * (爆伤 * (暴击率 + 追加暴击率) + (1 - 暴击率 - 追加暴击率)) * (通用伤害加成 + 追加伤害加成) * 易伤
+        zhuijia_harm = (attack * zhuijia_beilv + zhuijia_addition + huiwei * huiwei_beilv) * (crit_harm * (crit_rate_zhuijia + crit_rate) + (1 - crit_rate - crit_rate_zhuijia)) * (1 + zhuijia_harm_beilv + harm_beilv) * easy_hurt
+        msg += f" 追加期望伤害 {int(zhuijia_harm)}"
+        #击破伤害 = 10000 * 击破特攻 * 易伤
+        jipo_harm = 10000 * (1 + jipo) * easy_hurt
+        msg += f" 击破伤害 {int(jipo_harm)}"
+        #持续伤害 = 持续伤害 * 持续伤害易伤 * 持续伤害加成 * 易伤
+        continue_harm = continue_harm * easy_hurt_continue * (continue_harm_beilv + jipo) * easy_hurt
+        msg += f" 持续伤害 {int(continue_harm)}"
+        #离神伤害 = 离神 * 易伤 * 其他
+        lishen_harm = lishen_have * life_enemy * 0.3 * lishen_beilv * lishen_multi * lishen_multi_1 * easy_hurt
+        msg += f" 离神伤害 {int(lishen_harm)}"
+        msg += f" 总伤害 {int(end_harm + zhuijia_harm + jipo_harm + continue_harm + lishen_harm)}"
+        
+        return int(end_harm + zhuijia_harm + jipo_harm + continue_harm + lishen_harm), msg
+        
+    
+    
+
+def count_bless_num(type, level, bless_list: list):
+    num = 0
+    for i in bless_list:
+        if type in i:
+            num += 1
+    data = {
+        "存护": {
+            "1": f"defense += defense_basis * 0.6 * 6 if {num} > 6 else defense_basis * 0.6 * {num}",
+            "2": f"defense += defense_basis * 0.8 * 9 if {num} > 9 else defense_basis * 0.8 * {num}"
+        },
+        "记忆": {
+            "1": f"lishen_beilv += 0.08 * 6 if {num} > 6 else 0.08 * {num}",
+            "2": f"lishen_beilv += 0.08 * 9 if {num} > 9 else 0.10 * {num}"
+        }, 
+        "虚无": {
+            "1": f"continue_beilv += 0.06 * 6 if {num} > 6 else 0.06 * {num}",
+            "2": f"continue_beilv += 0.08 * 9 if {num} > 9 else 0.08 * {num}"
+        },  
+        "丰饶": {
+            "1": f"life += (life_basis * 0.05 * 6) if {num} > 6 else (life_basis * 0.05 * {num})",
+            "2": f"life += (life_basis * 0.07 * 9) if {num} > 9 else (life_basis * 0.07 * {num})"
+        }, 
+        "巡猎": {
+            "1": f"crit_harm += 0.04 * 6 if {num} > 6 else 0.04 * {num}",
+            "2": f"crit_harm += 0.06 * 9 if {num} > 9 else 0.06 * {num}"
+        },            
+        "毁灭": {
+            "1": f"attack += 0.05 * 6 if {num} > 6 else 0.05 * {num}",
+            "2": f"attack += 0.07 * 9 if {num} > 9 else 0.07 * {num}"
+        },    
+        "欢愉": {
+            "1": f"zhuijia_harm_beilv += 0.10 * 6 if {num} > 6 else 0.10 * {num}",
+            "2": f"zhuijia_harm_beilv += 0.13 * 9 if {num} > 9 else 0.13 * {num}"
+        },    
+    }
+    return data[type][level]            
+
+
+
       

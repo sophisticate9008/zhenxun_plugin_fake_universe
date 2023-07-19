@@ -15,7 +15,7 @@ def get_all_thing_list() -> list:
     thing_list.append(Thing("杰姆·哈克与杰姆·哈尔", jiemuhakeyujiemuhaer))
     thing_list.append(Thing("虚构史学家", xugoushixuejia))
     thing_list.append(Thing("游牧矿工", youmukuanggong))
-    thing_list.append(Thing("阮·梅", ruanmei))
+    thing_list.append(Thing("阮.梅", ruanmei))
     thing_list.append(Thing("互动芝术", hudongzhishu))
     thing_list.append(Thing("电视购物频道", dianshigouwupindao))
     thing_list.append(Thing("赏金猎人", shangjinlieren))

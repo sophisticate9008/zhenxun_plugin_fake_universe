@@ -24,6 +24,7 @@ async def niuzai(obj: 'Process'):
     sel = await get_answer(obj.my_dict,obj.bot,obj.event,2)
     if "0" in sel:
         obj.gold *= 0.5
+        obj.gold = int(obj.gold)
     else:
         await obj.dir_end(20)
         await attack_monster(obj, 1)
@@ -72,11 +73,11 @@ async def youmukuanggong(obj: 'Process'):
 async def ruanmei(obj: 'Process'):
     msg_merge(obj.my_dict,"阮.梅事件触发")
     
-    xingshen = random.choice(["巡猎,虚无,记忆,存护,欢愉,丰饶,毁灭"])
+    xingshen = random.choice(["巡猎","虚无","记忆","存护","欢愉","丰饶","毁灭"])
     msg_merge(obj.my_dict,f"获得全部{xingshen}祝福(0), 2000碎片(1)")
     sel = await get_answer(obj.my_dict,obj.bot,obj.event,2)
     if "0" in sel:
-        for i in obj.all_bless:
+        for i in obj.all_bless[:]:
             if xingshen in i:
                 obj.choose_bless(i)
     else:
@@ -420,7 +421,7 @@ async def xugeyuanba(obj: 'Process'):
         await obj.get_thing_bless("随机","二星")
     elif "1" in sel:
         await obj.dir_end(10)
-        await obj.get_thing_bless("随机","二星")
+        await obj.get_thing_bless("随机","三星")
     else:
         pass
     
